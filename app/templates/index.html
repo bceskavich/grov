@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{head}}</h1>
+<p>This template contains the basics needed to get your Flask project up and running in no time. You can see a full list of the Python libraries needed via the requirements file, with the most important including:</p>
+<ul>
+	<li><strong><a href="http://flask.pocoo.org/" target="_blank">Flask</a></strong> - the core web development framework used here</li>
+	<li><strong><a href="https://flask-login.readthedocs.org/en/latest/" target="_blank">Flask-Login</a></strong> - a library that deftly handle all sorts of user logins</li>
+	<li><strong><a href="http://www.sqlalchemy.org/" target="_blank">SQLAlchemy</a> + <a href="http://pythonhosted.org/Flask-SQLAlchemy/" target="_blank">Flask-SQLAlchemy</a> + <a href="https://code.google.com/p/sqlalchemy-migrate/" target="_blank">sqlalchemy-migrate</a></strong> - for abstraction and database management</li>
+	<li><strong><a href="https://flask-wtf.readthedocs.org/en/latest/" target="_blank">Flaks-WTF</a> </strong>- for input forms</li>
+	<li><strong><a href="https://github.com/gyllstromk/Flask-WhooshAlchemy" target="_blank">Flask-WhooshAlchemy</a></strong> - for searches</li>
+</ul>
+<p>Also included are the following structural elements to get your project started:</p>
+<ul>
+	<li>A simple SQLite database with migration scripts.</li>
+	<li>A script (run.py) to easily stop/start the Flask's web server.</li>
+	<li>A basic template structure and MVC layout.</li>
+	<li>A testing file using Python's unittest module.</li>
+</ul>
+<h3>To Get Started...</h3>
+<ol>
+	<li>Install the required Python extensions and frameworks</li>
+	<li>Setup your database with the provided migration scripts</li>
+	<li>Test out the server</li>
+	<li>Now get started.</li>
+</ol>
+<p>That's it - a simple structure to get you started.</p>
+<p>Credit to Miguel Grinberg's well-known <a href="http://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world" target="_blank">Flask Tutorial</a>, on which much of this foundational template is based!</p>
+{% endblock %}
