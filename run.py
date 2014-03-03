@@ -1,4 +1,4 @@
-#!env/bin/python
+#!grov/bin/python
 from app import app
 
 # NOTE - Debug mode on for development, should be

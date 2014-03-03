@@ -41,6 +41,7 @@ db_repository
 
 # Other
 tmp
+config.py
 
 # Virtual Env
-env
+grov
