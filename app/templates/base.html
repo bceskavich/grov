@@ -16,8 +16,21 @@
 	</head>
 	<body>
 		<header>
-			<h1>{{user}}</h1>
+			{% if g.user %}
+				<h1>Welcome: {{g.user['screen_name']}} | <a href="{{url_for('logout')}}">Logout</a></h1>
+			{% else %}
+				<h1><a href="{{url_for('login')}}">Login w/ Twitter</a></h1>
+			{% endif %}
 		</header>
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+			<ul>
+			{% for message in messages %}
+				<li>{{ message }}</li>
+			{% endfor %}
+			</ul>
+			{% endif %}
+		{% endwith %}
 		<hr />
 		<div class="container">
 			{% block content %}{% endblock %}

@@ -1,6 +1,7 @@
 from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
-from app import app, db, login_manager, twitter
+from flask_oauthlib.client import OAuth
+from app import app, db, login_manager, twitter, oauth
 from models import User, ROLE_USER, ROLE_ADMIN
 import json
 import requests
@@ -18,26 +19,27 @@ def load_user(id):
 @app.route('/')
 @app.route('/index')
 def index():
-	title = "Flask Foundation"
-	head = "Welcome to Billy's Flask Foundation!"
+	title = "Grov - A Work In Progress"
+	head = "THIS IS GROV"
 	return render_template("index.html",
 		title = title,
-		head = head,
-		user = g.user)
+		head = head)
 
 @app.route('/login')
 def login():
-	callback_url = url_for('oauthorized', next=request.args.get('next'))
-	return twitter.authorize(callback=callback_url or request.referrer or None)
+	return twitter.authorize(callback=url_for('auth', 
+		next=request.args.get('next') or request.referrer or None))
 
-@app.route('/oauthorized')
+@app.route('/auth')
 @twitter.authorized_handler
-def oauthorized(resp):
+def auth(resp):
+	next_url = request.args.get('next') or url_for('index')
 	if resp is None:
-		flash("You've been denied access.")
+		flash(u"You've been denied access.")
+		return redirect(next_url)
 	else:
 		session['twitter'] = resp
-	return redirect(url_for('index'))
+	return redirect(next_url)
 
 @app.route('/logout')
 def logout():
