@@ -16,8 +16,8 @@
 	</head>
 	<body>
 		<header>
-			{% if g.user %}
-				<h1>Welcome: {{g.user['screen_name']}} | <a href="{{url_for('logout')}}">Logout</a></h1>
+			{% if g.user and g.user.is_authenticated() %}
+				<h1>Welcome: {{g.user.username}} | <a href="{{url_for('logout')}}">Logout</a></h1>
 			{% else %}
 				<h1><a href="{{url_for('login')}}">Login w/ Twitter</a></h1>
 			{% endif %}

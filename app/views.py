@@ -10,7 +10,7 @@ import requests
 def before_request():
 	g.user = None
 	if 'twitter' in session:
-		g.user = session['twitter']
+		g.user = current_user
 
 @login_manager.user_loader
 def load_user(id):
@@ -25,23 +25,32 @@ def index():
 		title = title,
 		head = head)
 
-@app.route('/login')
+@app.route('/login', methods = ['GET', 'POST'])
 def login():
 	return twitter.authorize(callback=url_for('auth', 
 		next=request.args.get('next') or request.referrer or None))
 
-@app.route('/auth')
+@app.route('/auth', methods = ['GET', 'POST'])
 @twitter.authorized_handler
 def auth(resp):
 	next_url = request.args.get('next') or url_for('index')
 	if resp is None:
-		flash(u"You've been denied access.")
+		flash(u"Ah shit, something went wrong.")
 		return redirect(next_url)
-	else:
-		session['twitter'] = resp
+	user = User.query.filter_by(username = resp['screen_name']).first()
+	if user is None:
+		user = User(username = resp['screen_name'], 
+			twitter_id = resp['user_id'], 
+			access_token = resp['oauth_token'], 
+			access_secret = resp['oauth_token_secret'])
+		db.session.add(user)
+		db.session.commit()
+	login_user(user)
+	session['twitter'] = resp
 	return redirect(next_url)
 
 @app.route('/logout')
 def logout():
+	logout_user()
 	session.pop('twitter', None)
 	return redirect(url_for('index'))
