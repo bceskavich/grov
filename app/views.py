@@ -21,6 +21,10 @@ def load_user(id):
 def index():
 	title = "Grov - A Work In Progress"
 	head = "THIS IS GROV"
+	if g.user is not None and g.user.is_authenticated():
+		frnd_count, foll_count = g.user.get_connections()
+		print "Saved " + str(frnd_count) + " friends."
+		print "Saved " + str(foll_count) + " followers."
 	return render_template("index.html",
 		title = title,
 		head = head)
@@ -37,6 +41,7 @@ def auth(resp):
 	if resp is None:
 		flash(u"Ah shit, something went wrong.")
 		return redirect(next_url)
+	print json.dumps(resp, indent=1)
 	user = User.query.filter_by(username = resp['screen_name']).first()
 	if user is None:
 		user = User(username = resp['screen_name'], 
