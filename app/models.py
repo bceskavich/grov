@@ -2,6 +2,7 @@ import twitter
 from app import db, app
 from config import CONSUMER_KEY, CONSUMER_SECRET
 import networkx as nx
+from networkx.readwrite import json_graph
 
 ROLE_USER = 0
 ROLE_ADMIN = 1
@@ -76,6 +77,29 @@ class User(db.Model):
 		return frnd_count, foll_count
 
 	def create_graph(self):
+		# Initiate Graph
+		g = nx.DiGraph()
+
+		# Add singular node for current user
+		g.add_node(self.twitter_id, {'label':'You: @' + self.username})
+
+		friends = Connection.query.filter_by(rel=1)
+		followers = Connection.query.filter_by(rel=0)
+
+		for i in friends:
+			user = User.query.get(i.user_id)
+			g.add_edge(i.twitter_id, user.twitter_id, {'label':'friend'})
+
+		for i in followers:
+			user = User.query.get(i.user_id)
+			g.add_edge(user.twitter_id, i.twitter_id, {'label':'follower'})
+
+		#print g.nodes()
+		#print g.edges()
+
+		json = json_graph.dumps(g, indent=1)
+		return json
+
 
 
 	def is_authenticated(self):
