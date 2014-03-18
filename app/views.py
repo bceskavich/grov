@@ -27,11 +27,12 @@ def index():
 		print "Saved " + str(frnd_count) + " friends."
 		print "Saved " + str(foll_count) + " followers."
 		"""
-		json = g.user.create_graph()
-		#print json
+		#data = g.user.create_graph()
+	url = url_for('static', filename='graphdata.json')
 	return render_template("index.html",
 		title = title,
-		head = head)
+		head = head,
+		url = url)
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():

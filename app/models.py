@@ -1,4 +1,5 @@
 import twitter
+import json
 from app import db, app
 from config import CONSUMER_KEY, CONSUMER_SECRET
 import networkx as nx
@@ -81,26 +82,28 @@ class User(db.Model):
 		g = nx.DiGraph()
 
 		# Add singular node for current user
-		g.add_node(self.twitter_id, {'label':'You: @' + self.username})
+		# g.add_node(self.twitter_id, {'label':'You: @' + self.username})
 
 		friends = Connection.query.filter_by(rel=1)
 		followers = Connection.query.filter_by(rel=0)
 
 		for i in friends:
 			user = User.query.get(i.user_id)
-			g.add_edge(i.twitter_id, user.twitter_id, {'label':'friend'})
+			g.add_edge(str(i.twitter_id), str(user.twitter_id), {'label':'friend'})
 
 		for i in followers:
 			user = User.query.get(i.user_id)
-			g.add_edge(user.twitter_id, i.twitter_id, {'label':'follower'})
+			g.add_edge(str(user.twitter_id), str(i.twitter_id), {'label':'follower'})
 
-		#print g.nodes()
-		#print g.edges()
+		data = json_graph.dumps(g, indent=1)
+		f = file('graphdata.json', 'w')
+		f.write(data)
+		f.close()
+		f = file('graphdata.json', 'r')
+		text = json.load(f)
+		f.close()
 
-		json = json_graph.dumps(g, indent=1)
-		return json
-
-
+		return text
 
 	def is_authenticated(self):
 		return True
