@@ -81,19 +81,30 @@ class User(db.Model):
 		# Initiate Graph
 		g = nx.DiGraph()
 
-		# Add singular node for current user
-		# g.add_node(self.twitter_id, {'label':'You: @' + self.username})
+		twitter_ids = [u.twitter_id for u in User.query.all()]
+
+		for user in User.query.all():
+			g.add_node(str(user.twitter_id), {'label':'@' + user.username, 'color':'Brown'})
+
+		for conn in Connection.query.all():
+			if conn.twitter_id in twitter_ids:
+				pass
+			elif conn.rel == 0:
+				g.add_node(str(conn.twitter_id), {'label':'Anonymous Follower', 'color':'Blue'})
+			else:
+				g.add_node(str(conn.twitter_id), {'label':'Anonymous Friend', 'color':'Orange'})
+
 
 		friends = Connection.query.filter_by(rel=1)
 		followers = Connection.query.filter_by(rel=0)
 
 		for i in friends:
 			user = User.query.get(i.user_id)
-			g.add_edge(str(i.twitter_id), str(user.twitter_id), {'label':'friend'})
+			g.add_edge(str(i.twitter_id), str(user.twitter_id))
 
 		for i in followers:
 			user = User.query.get(i.user_id)
-			g.add_edge(str(user.twitter_id), str(i.twitter_id), {'label':'follower'})
+			g.add_edge(str(user.twitter_id), str(i.twitter_id))
 
 		data = json_graph.dumps(g, indent=1)
 		f = file('graphdata.json', 'w')
