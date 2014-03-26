@@ -4,14 +4,14 @@
 <h3>{{head}}</h3>
 <div class="main">
 </div>
-{% if g.user and g.user.is_authenticated() %}	
+{% if g.user and g.user.is_authenticated() %}
 <script>
 	var width = 1500,
-		height = 2000;
+		height = 1000;
 
 	var force = d3.layout.force()
-		.charge(-50)
-		.linkDistance(200)
+		.charge(-200)
+		.linkDistance(100)
 		.size([width, height]);
 
 	var svg = d3.select('.main').append('svg')
@@ -19,21 +19,42 @@
 		.attr('height', height);
 
 	d3.json('{{url}}', function(e, graph){
-		force
-			.nodes(graph.nodes)
-			.links(graph.links)
-			.start();
+        var n = graph.nodes.length;
+
+        force.nodes(graph.nodes).links(graph.links);
+
+        graph.nodes.forEach(function(d, i){
+            d.x = d.y = width / n * i;
+        });
+
+        force.start();
+        for (var i = n; i > 0; --i) force.tick();
+        force.stop();
+
+        // Center the nodes in the middle.
+        var ox = 0, oy = 0;
+        graph.nodes.forEach(function(d) { ox += d.x, oy += d.y; });
+        ox = ox / n - width / 2, oy = oy / n - height / 2;
+        graph.nodes.forEach(function(d) { d.x -= ox, d.y -= oy; });
 
 		var link = svg.selectAll('.link')
 			.data(graph.links)
 			.enter().append('line')
 			.attr('class','link')
+            .attr("x1", function(d) { return d.source.x; })
+            .attr("y1", function(d) { return d.source.y; })
+            .attr("x2", function(d) { return d.target.x; })
+            .attr("y2", function(d) { return d.target.y; });
 
 		var node = svg.selectAll('.node')
 			.data(graph.nodes)
 			.enter().append('circle')
 			.attr('class','node')
-			.attr('r', 5)
+            .attr("cx", function(d) { return d.x; })
+            .attr("cy", function(d) { return d.y; })
+			.attr('r', function(d){
+                return d.amnt * 2;
+            })
 			.style('fill', function(d){
 				return d.color;
 			})
@@ -44,14 +65,6 @@
 				return d.label;
 			});
 
-		force.on('tick', function(){
-			link.attr('x1', function(d){ return d.source.x; })
-				.attr('y1', function(d){ return d.source.y; })
-				.attr('x2', function(d){ return d.target.x; })	
-				.attr('y2', function(d){ return d.target.y; });	
-			node.attr('cx', function(d){ return d.x; })
-				.attr('cy', function(d){ return d.y; });			
-		});
 	});
 </script>
 {% endif %}

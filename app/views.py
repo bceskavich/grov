@@ -27,7 +27,7 @@ def index():
 		print "Saved " + str(frnd_count) + " friends."
 		print "Saved " + str(foll_count) + " followers."
 		"""
-		#data = g.user.create_graph()
+		data = g.user.create_graph()
 	url = url_for('static', filename='graphdata.json')
 	return render_template("index.html",
 		title = title,
@@ -36,7 +36,7 @@ def index():
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
-	return twitter.authorize(callback=url_for('auth', 
+	return twitter.authorize(callback=url_for('auth',
 		next=request.args.get('next') or request.referrer or None))
 
 @app.route('/auth', methods = ['GET', 'POST'])
@@ -49,9 +49,9 @@ def auth(resp):
 	print json.dumps(resp, indent=1)
 	user = User.query.filter_by(username = resp['screen_name']).first()
 	if user is None:
-		user = User(username = resp['screen_name'], 
-			twitter_id = resp['user_id'], 
-			access_token = resp['oauth_token'], 
+		user = User(username = resp['screen_name'],
+			twitter_id = resp['user_id'],
+			access_token = resp['oauth_token'],
 			access_secret = resp['oauth_token_secret'])
 		db.session.add(user)
 		db.session.commit()

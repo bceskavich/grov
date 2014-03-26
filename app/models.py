@@ -84,15 +84,26 @@ class User(db.Model):
 		twitter_ids = [u.twitter_id for u in User.query.all()]
 
 		for user in User.query.all():
-			g.add_node(str(user.twitter_id), {'label':'@' + user.username, 'color':'Brown'})
+			amnt = len(Connection.query.filter_by(twitter_id=user.twitter_id).all())
+			g.add_node(str(user.twitter_id), {'label':'@' + user.username, 'color':'Brown', 'amnt':amnt})
 
 		for conn in Connection.query.all():
 			if conn.twitter_id in twitter_ids:
 				pass
 			elif conn.rel == 0:
-				g.add_node(str(conn.twitter_id), {'label':'Anonymous Follower', 'color':'Blue'})
+				amnt = len(Connection.query.filter_by(twitter_id=conn.twitter_id).all())
+				g.add_node(str(conn.twitter_id), {
+					'label':'Anonymous Follower',
+					'color':'Blue',
+					'user_id':str(conn.user_id),
+					'amnt':amnt })
 			else:
-				g.add_node(str(conn.twitter_id), {'label':'Anonymous Friend', 'color':'Orange'})
+				amnt = len(Connection.query.filter_by(twitter_id=conn.twitter_id).all())
+				g.add_node(str(conn.twitter_id), {
+					'label':'Anonymous Friend',
+					'color':'Orange',
+					'user_id':str(conn.user_id),
+					'amnt':amnt })
 
 
 		friends = Connection.query.filter_by(rel=1)
