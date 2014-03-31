@@ -19,20 +19,24 @@ def load_user(id):
 @app.route('/')
 @app.route('/index')
 def index():
-	title = "Grov - A Work In Progress"
-	head = "THIS IS GROV"
+	frnd_count = 0
+	foll_count = 0
 	if g.user is not None and g.user.is_authenticated():
-		"""
-		frnd_count, foll_count = g.user.get_connections()
-		print "Saved " + str(frnd_count) + " friends."
-		print "Saved " + str(foll_count) + " followers."
-		"""
-		data = g.user.create_graph()
-	url = url_for('static', filename='graphdata.json')
+		#frnd_count, foll_count = g.user.get_connections()
+		pass
+	url = url_for('static', filename='json/graphdata.json')
 	return render_template("index.html",
-		title = title,
-		head = head,
-		url = url)
+		friends = frnd_count,
+		followers = foll_count)
+
+@app.route('/view')
+def view():
+	datasource = url_for('static', filename='json/graphdata.json')
+	if g.user is not None and g.user.is_authenticated():
+		#g.user.create_graph()
+		pass
+	return render_template('view.html',
+		datasource = datasource)
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():

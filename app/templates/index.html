@@ -1,71 +1,43 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h3>{{head}}</h3>
-<div class="main">
+<nav>
+    <div class="container">
+        <h1 class="left">Grov</h1>
+        {% if g.user and g.user.is_authenticated() %}
+            <h1 class="right"><a href="{{url_for('logout')}}">Logout</a></h1>
+        {% else %}
+            <h1 class="right"><a href="{{url_for('login')}}">Sign In via Twitter</a></h1>
+        {% endif %}
+    </div>
+    <div class="stopfloat"></div>
+</nav>
+
+<div id="cover">
+    <div class="container">
+    {% if g.user and g.user.is_authenticated() %}
+        <h1>Hey there, @{{g.user.username}}</h1>
+        <div>
+            <p>Friends Saved: {{friends}}</p>
+            <p>Followers Saved: {{followers}}</p>
+        </div>
+    {% endif %}
+    </div>
 </div>
-{% if g.user and g.user.is_authenticated() %}
-<script>
-	var width = 1500,
-		height = 1000;
+<div class="stopfloat"></div>
 
-	var force = d3.layout.force()
-		.charge(-200)
-		.linkDistance(100)
-		.size([width, height]);
+<div class="container" id="main">
+    <div>
+        <h1>Grov is...</h1>
+    </div>
+    <div>
+        <p>...a way to better understand our increasingly interconnected lives. We are not isolated when we build our personal connections on social networks like Twitter. Instead, we build complex, interwoven networks. Just as our lives overlap, so too do our social graphs.</p>
 
-	var svg = d3.select('.main').append('svg')
-		.attr('width', width)
-		.attr('height', height);
+        <p>Nowhere is this more true than Syracuse University, a vibrant campus community that is by nature collaborative and connected. The networks we have built online allow us the privilege of better visualizing the way our university interacts.</p>
 
-	d3.json('{{url}}', function(e, graph){
-        var n = graph.nodes.length;
+        <p>Grov is a simple but powerful visualization of this data. Using the D3 data visualization library and data mining with Python, Grov finds and illustrates our networks on Twitter. With each user who logs in here, the graph grows in its size, complexity, and beauty.</p>
 
-        force.nodes(graph.nodes).links(graph.links);
-
-        graph.nodes.forEach(function(d, i){
-            d.x = d.y = width / n * i;
-        });
-
-        force.start();
-        for (var i = n; i > 0; --i) force.tick();
-        force.stop();
-
-        // Center the nodes in the middle.
-        var ox = 0, oy = 0;
-        graph.nodes.forEach(function(d) { ox += d.x, oy += d.y; });
-        ox = ox / n - width / 2, oy = oy / n - height / 2;
-        graph.nodes.forEach(function(d) { d.x -= ox, d.y -= oy; });
-
-		var link = svg.selectAll('.link')
-			.data(graph.links)
-			.enter().append('line')
-			.attr('class','link')
-            .attr("x1", function(d) { return d.source.x; })
-            .attr("y1", function(d) { return d.source.y; })
-            .attr("x2", function(d) { return d.target.x; })
-            .attr("y2", function(d) { return d.target.y; });
-
-		var node = svg.selectAll('.node')
-			.data(graph.nodes)
-			.enter().append('circle')
-			.attr('class','node')
-            .attr("cx", function(d) { return d.x; })
-            .attr("cy", function(d) { return d.y; })
-			.attr('r', function(d){
-                return d.amnt * 2;
-            })
-			.style('fill', function(d){
-				return d.color;
-			})
-			.call(force.drag);
-
-		node.append('title')
-			.text(function(d){
-				return d.label;
-			});
-
-	});
-</script>
-{% endif %}
+        <p>So, check back up on the big screen, where you’ll see it all in action!</p>
+    </div>
+</div>
 {% endblock %}

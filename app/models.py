@@ -1,5 +1,4 @@
-import twitter
-import json
+import twitter, json, os
 from app import db, app
 from config import CONSUMER_KEY, CONSUMER_SECRET
 import networkx as nx
@@ -84,8 +83,10 @@ class User(db.Model):
 		twitter_ids = [u.twitter_id for u in User.query.all()]
 
 		for user in User.query.all():
-			amnt = len(Connection.query.filter_by(twitter_id=user.twitter_id).all())
-			g.add_node(str(user.twitter_id), {'label':'@' + user.username, 'color':'Brown', 'amnt':amnt})
+			amnt = 1
+			if len(Connection.query.filter_by(twitter_id=user.twitter_id).all()) > 0:
+				amnt += len(Connection.query.filter_by(twitter_id=user.twitter_id).all())
+			g.add_node(str(user.twitter_id), {'label':'@' + user.username, 'amnt':amnt, 'class':'user' })
 
 		for conn in Connection.query.all():
 			if conn.twitter_id in twitter_ids:
@@ -94,16 +95,16 @@ class User(db.Model):
 				amnt = len(Connection.query.filter_by(twitter_id=conn.twitter_id).all())
 				g.add_node(str(conn.twitter_id), {
 					'label':'Anonymous Follower',
-					'color':'Blue',
 					'user_id':str(conn.user_id),
-					'amnt':amnt })
-			else:
+					'amnt':amnt,
+					'class':'anonymous' })
+			elif conn.rel == 1:
 				amnt = len(Connection.query.filter_by(twitter_id=conn.twitter_id).all())
 				g.add_node(str(conn.twitter_id), {
 					'label':'Anonymous Friend',
-					'color':'Orange',
 					'user_id':str(conn.user_id),
-					'amnt':amnt })
+					'amnt':amnt,
+					'class':'anonymous' })
 
 
 		friends = Connection.query.filter_by(rel=1)
@@ -118,14 +119,10 @@ class User(db.Model):
 			g.add_edge(str(user.twitter_id), str(i.twitter_id))
 
 		data = json_graph.dumps(g, indent=1)
-		f = file('graphdata.json', 'w')
+		#src = app.send_from_directory('app/static', 'graphdata.json')
+		f = file('app/static/json/graphdata.json', 'w')
 		f.write(data)
 		f.close()
-		f = file('graphdata.json', 'r')
-		text = json.load(f)
-		f.close()
-
-		return text
 
 	def is_authenticated(self):
 		return True
@@ -146,5 +143,5 @@ class Connection(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
 	twitter_id = db.Column(db.Integer, index = True)
 	name = db.Column(db.String(64), index = True)
-	rel = db.Column(db.SmallInteger) # 0 = follower, 1 = friend
+	rel = db.Column(db.SmallInteger) # 0 = follower, 1 = friend, 2 = recursive
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
