@@ -111,6 +111,17 @@ nav a:hover {
   height: 1050px;
 }
 
+.buttons {
+  margin-top: 40px;
+  font-family: 'Brandon Light'
+}
+
+#view {
+  position: absolute;
+  margin-top: -1500px;
+  margin-left: -1000px;
+}
+
 .node {
   stroke: #fff;
   stroke-width: 1.5px;

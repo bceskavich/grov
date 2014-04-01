@@ -1,18 +1,26 @@
 {% extends "base.html" %}
 
 {% block content %}
+<nav>
+    <div class="container">
+        <h1 class="left">The Grov of SU</h1>
+        <div class="buttons right">
+            <button class="zoom-in">Zoom In</button>
+            <button class="zoom-out">Zoom Out</button>
+            <input type="range" class="zoom-range">
+            <button class="reset">Reset</button>
+        </div>
+    </div>
+    <div class="stopfloat"></div>
+</nav>
 <div class="viewbox parent">
-</div>
-<div class="buttons">
-    <button class="zoom-in">Zoom In</button>
-    <button class="zoom-out">Zoom Out</button>
-    <input type="range" class="zoom-range">
-    <button class="reset">Reset</button>
 </div>
 <script>
     var scale = .75,
-        width = $('.viewbox').width(),
-        height = $('.viewbox').height();
+        //width = $('.viewbox').width(),
+        width = 4000,
+        //height = $('.viewbox').height();
+        height = 4000;
 
     var force = d3.layout.force()
         .charge(-150)
@@ -20,6 +28,7 @@
         .size([width, height]);
 
     var svg = d3.select('.viewbox').append('svg')
+        .attr('id', 'view')
         .attr('class', 'panzoom')
         .attr('width', width)
         .attr('height', height);
@@ -85,6 +94,9 @@
 
     $(document).ready(function(){
         $('.panzoom').panzoom({
+            increment: 0.1,
+            minScale: 0.1,
+            maxScale: 5,
             $zoomIn: $(".zoom-in"),
             $zoomOut: $(".zoom-out"),
             $zoomRange: $(".zoom-range"),

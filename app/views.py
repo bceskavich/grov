@@ -22,8 +22,7 @@ def index():
 	frnd_count = 0
 	foll_count = 0
 	if g.user is not None and g.user.is_authenticated():
-		#frnd_count, foll_count = g.user.get_connections()
-		pass
+		frnd_count, foll_count = g.user.get_connections()
 	url = url_for('static', filename='json/graphdata.json')
 	return render_template("index.html",
 		friends = frnd_count,
@@ -33,8 +32,7 @@ def index():
 def view():
 	datasource = url_for('static', filename='json/graphdata.json')
 	if g.user is not None and g.user.is_authenticated():
-		#g.user.create_graph()
-		pass
+		g.user.create_graph()
 	return render_template('view.html',
 		datasource = datasource)
 
@@ -50,7 +48,6 @@ def auth(resp):
 	if resp is None:
 		flash(u"Ah shit, something went wrong.")
 		return redirect(next_url)
-	print json.dumps(resp, indent=1)
 	user = User.query.filter_by(username = resp['screen_name']).first()
 	if user is None:
 		user = User(username = resp['screen_name'],

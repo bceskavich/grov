@@ -48,8 +48,9 @@ class User(db.Model):
 		twitter_api = self.oauth_login()
 
 		# Gets "friends" and followers lists from Twitter
-		friends = twitter_api.friends.ids()
-		followers = twitter_api.followers.ids()
+		# Max limited to 1500 for the sake of this project and the node graph size
+		friends = twitter_api.friends.ids(count=1500)
+		followers = twitter_api.followers.ids(count=1500)
 
 		# Counts to determine how many are saved
 		frnd_count = 0
