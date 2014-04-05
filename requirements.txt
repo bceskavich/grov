@@ -3,9 +3,10 @@ Flask-Login==0.2.9
 Flask-OAuthlib==0.4.3
 Flask-SQLAlchemy==1.0
 Flask-WTF==0.9.4
+Flask-WhooshAlchemy==0.55a
 Jinja2==2.7.2
 MarkupSafe==0.18
-SQLAlchemy==0.9.3
+SQLAlchemy==0.9.4
 Tempita==0.5.2
 WTForms==1.0.5
 Werkzeug==0.9.4
