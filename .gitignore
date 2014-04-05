@@ -1,10 +1,5 @@
 *.py[cod]
-
-# Translations
 *.mo
-
-# Local DB
 *.db
-
-# Virtual Env
 grov
+graph_tests
