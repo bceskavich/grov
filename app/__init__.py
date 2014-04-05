@@ -34,7 +34,7 @@ if os.environ.get('HEROKU') is not None:
     stream_handler = logging.StreamHandler()
     app.logger.addHandler(stream_handler)
     app.logger.setLevel(logging.INFO)
-    app.logger.info('GROV')
+    app.logger.info('grov')
 
 from app import views
 
