@@ -101,6 +101,7 @@ nav a:hover {
   margin-top: 20px;
   font-size: 1.25em;
   line-height: 30px;
+  font-weight: bold;
 }
 
 /* Graph View */
