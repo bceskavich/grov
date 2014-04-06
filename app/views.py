@@ -65,3 +65,9 @@ def logout():
 	logout_user()
 	session.pop('twitter', None)
 	return redirect(url_for('index'))
+
+@app.route('/json_test')
+def json_test():
+	if g.user is not None and g.user.is_authenticated():
+		data = g.user.create_graph()
+		print type(data)

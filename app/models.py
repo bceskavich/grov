@@ -120,10 +120,11 @@ class User(db.Model):
 			g.add_edge(user.twitter_id, i.twitter_id)
 
 		data = json_graph.dumps(g, indent=1)
-		#src = app.send_from_directory('app/static', 'graphdata.json')
 		f = file('app/static/json/graphdata.json', 'w')
 		f.write(data)
 		f.close()
+
+		return data
 
 	def is_authenticated(self):
 		return True
