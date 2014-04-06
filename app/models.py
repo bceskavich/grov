@@ -11,7 +11,7 @@ class User(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
 	username = db.Column(db.String(64), index = True, unique = True) # Twitter's 'screen_name'
 	# Twitter's 'user_id'
-	twitter_id = db.Column(db.Integer, index = True, unique = True)
+	twitter_id = db.Column(db.String(256), index = True, unique = True)
 	# Twitter's 'oauth_token'
 	access_token = db.Column(db.String(64), unique = True)
 	# Twitter's 'oauth_token_secret'
@@ -59,8 +59,8 @@ class User(db.Model):
 		# Saves connection to DB only if new
 		# Adds one to the count of saved friends
 		for friend in friends['ids']:
-			if self.is_unique(friend, rel=1):
-				connection = Connection(twitter_id=friend, rel=1, user_id=self.id)
+			if self.is_unique(str(friend), rel=1):
+				connection = Connection(twitter_id=str(friend), rel=1, user_id=self.id)
 				db.session.add(connection)
 				db.session.commit()
 				frnd_count += 1
@@ -68,8 +68,8 @@ class User(db.Model):
 		# Saves connection to DB only if new
 		# Adds one to the count of saved followers
 		for follower in followers['ids']:
-			if self.is_unique(follower, rel=0):
-				connection = Connection(twitter_id=follower, rel=0, user_id=self.id)
+			if self.is_unique(str(follower), rel=0):
+				connection = Connection(twitter_id=str(follower), rel=0, user_id=self.id)
 				db.session.add(connection)
 				db.session.commit()
 				foll_count += 1
@@ -87,23 +87,23 @@ class User(db.Model):
 			amnt = 1
 			if len(Connection.query.filter_by(twitter_id=user.twitter_id).all()) > 0:
 				amnt += len(Connection.query.filter_by(twitter_id=user.twitter_id).all())
-			g.add_node(str(user.twitter_id), {'label':'@' + user.username, 'amnt':amnt, 'class':'user' })
+			g.add_node(user.twitter_id, {'label':'@' + user.username, 'amnt':amnt, 'class':'user' })
 
 		for conn in Connection.query.all():
 			if conn.twitter_id in twitter_ids:
 				pass
 			elif conn.rel == 0:
 				amnt = len(Connection.query.filter_by(twitter_id=conn.twitter_id).all())
-				g.add_node(str(conn.twitter_id), {
+				g.add_node(conn.twitter_id, {
 					'label':'Anonymous Follower',
-					'user_id':str(conn.user_id),
+					'user_id':conn.user_id,
 					'amnt':amnt,
 					'class':'anonymous' })
 			elif conn.rel == 1:
 				amnt = len(Connection.query.filter_by(twitter_id=conn.twitter_id).all())
-				g.add_node(str(conn.twitter_id), {
+				g.add_node(conn.twitter_id, {
 					'label':'Anonymous Friend',
-					'user_id':str(conn.user_id),
+					'user_id':conn.user_id,
 					'amnt':amnt,
 					'class':'anonymous' })
 
@@ -113,11 +113,11 @@ class User(db.Model):
 
 		for i in friends:
 			user = User.query.get(i.user_id)
-			g.add_edge(str(i.twitter_id), str(user.twitter_id))
+			g.add_edge(i.twitter_id, user.twitter_id)
 
 		for i in followers:
 			user = User.query.get(i.user_id)
-			g.add_edge(str(user.twitter_id), str(i.twitter_id))
+			g.add_edge(user.twitter_id, i.twitter_id)
 
 		data = json_graph.dumps(g, indent=1)
 		#src = app.send_from_directory('app/static', 'graphdata.json')
@@ -142,7 +142,7 @@ class User(db.Model):
 
 class Connection(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
-	twitter_id = db.Column(db.Integer, index = True)
+	twitter_id = db.Column(db.String(256), index = True)
 	name = db.Column(db.String(64), index = True)
 	rel = db.Column(db.SmallInteger) # 0 = follower, 1 = friend, 2 = recursive
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
