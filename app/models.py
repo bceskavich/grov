@@ -1,3 +1,4 @@
+from flask import Response, jsonify
 import twitter, json, os
 from app import db, app
 from config import CONSUMER_KEY, CONSUMER_SECRET
@@ -119,12 +120,10 @@ class User(db.Model):
 			user = User.query.get(i.user_id)
 			g.add_edge(user.twitter_id, i.twitter_id)
 
-		data = json_graph.dumps(g, indent=1)
+		data = json_graph.dumps(g, encoding='utf-8')
 		f = file('app/static/json/graphdata.json', 'w')
 		f.write(data)
 		f.close()
-
-		return data
 
 	def is_authenticated(self):
 		return True

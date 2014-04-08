@@ -33,7 +33,7 @@
         .attr('width', width)
         .attr('height', height);
 
-    d3.json('{{datasource}}', function(e, graph){
+    d3.map({{datasource}}, function(e, graph){
         var n = graph.nodes.length;
 
         force.nodes(graph.nodes)
