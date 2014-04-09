@@ -1,7 +1,7 @@
-from flask import Response, jsonify
+from flask import Response, jsonify, url_for
 import twitter, json, os
 from app import db, app
-from config import CONSUMER_KEY, CONSUMER_SECRET
+from config import CONSUMER_KEY, CONSUMER_SECRET, basedir
 import networkx as nx
 from networkx.readwrite import json_graph
 
@@ -121,7 +121,8 @@ class User(db.Model):
 			g.add_edge(user.twitter_id, i.twitter_id)
 
 		data = json_graph.dumps(g, indent=1, encoding='utf-8')
-		f = file('app/static/json/graphdata.json', 'w')
+		src = os.path.join(basedir, 'app/static/json/graphdata.json')
+		f = file(src, 'w')
 		f.write(data)
 		f.close()
 
