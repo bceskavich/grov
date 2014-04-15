@@ -23,8 +23,6 @@ def index():
 	foll_count = 0
 	if g.user is not None and g.user.is_authenticated():
 		frnd_count, foll_count = g.user.get_connections()
-		avatar = g.user.avatar()
-		print avatar
 	url = url_for('static', filename='json/graphdata.json')
 	return render_template("index.html",
 		friends = frnd_count,
@@ -33,10 +31,12 @@ def index():
 @app.route('/view')
 def view():
 	datasource = url_for('static', filename='json/graphdata.json')
+	users = User.query.all()
 	if g.user is not None and g.user.is_authenticated():
 		g.user.create_graph()
 	return render_template('view.html',
-		datasource = datasource)
+		datasource = datasource,
+		users = users)
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():

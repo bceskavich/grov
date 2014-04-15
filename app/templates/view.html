@@ -15,7 +15,7 @@
 </nav>
 <div class="viewbox parent">
 </div>
-<script>
+<script type="text/javascript">
     var scale = .75,
         width = 4000,
         height = 4000;
@@ -30,6 +30,21 @@
         .attr('class', 'panzoom')
         .attr('width', width)
         .attr('height', height);
+
+    var tip = d3.tip()
+        .attr('class', 'd3-tip')
+        .html(function(d){
+            {% for user in users %}
+                if (d.id == {{user.twitter_id}}){
+                    return "<img src='{{user.avatar()}}' /><span class='tip-text'>" + d.label + "</span>";
+                }
+                else {
+                    return "Anonymous User";
+                }
+            {% endfor %}
+        });
+
+    svg.call(tip);
 
     d3.json('{{datasource}}', function(e, graph){
         var n = graph.nodes.length;
@@ -81,12 +96,9 @@
             .attr("cy", function(d) { return d.y; })
             .attr('r', function(d){
                 return scale * (d.amnt * 4);
-            });
-
-        node.append('title')
-            .text(function(d){
-                return d.label;
-            });
+            })
+            .on('mouseover', tip.show)
+            .on('mouseout', tip.hide);
 
     });
 
@@ -99,10 +111,6 @@
             $zoomOut: $(".zoom-out"),
             $zoomRange: $(".zoom-range"),
             $reset: $(".reset")
-        });
-
-        $('.user').tooltipster({
-            content: $("<span><img src='{{g.user.avatar()}}' /> TEST</span>")
         });
     });
 </script>
