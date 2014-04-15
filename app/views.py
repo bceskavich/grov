@@ -23,6 +23,8 @@ def index():
 	foll_count = 0
 	if g.user is not None and g.user.is_authenticated():
 		frnd_count, foll_count = g.user.get_connections()
+		avatar = g.user.avatar()
+		print avatar
 	url = url_for('static', filename='json/graphdata.json')
 	return render_template("index.html",
 		friends = frnd_count,

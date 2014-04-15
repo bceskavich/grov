@@ -34,6 +34,15 @@ class User(db.Model):
 
 		return twitter_api
 
+	def avatar(self):
+		# Initiates Twitter API connections
+		twitter_api = self.oauth_login()
+
+		user = twitter_api.users.lookup(user_id=self.twitter_id)
+		avatar_url = user[0]['profile_image_url_https']
+
+		return avatar_url
+
 	# Checks if new connection is already in the DB
 	def is_unique(self, connection, rel):
 		# Finds saved connections, by current user + relationship type + id
@@ -88,7 +97,7 @@ class User(db.Model):
 			amnt = 1
 			if len(Connection.query.filter_by(twitter_id=user.twitter_id).all()) > 0:
 				amnt += len(Connection.query.filter_by(twitter_id=user.twitter_id).all())
-			g.add_node(user.twitter_id, {'label':'@' + user.username, 'amnt':amnt, 'class':'user' })
+			g.add_node(user.twitter_id, {'label':'@' + user.username, 'amnt':amnt, 'class':'user', 'avatar':user.avatar()})
 
 		for conn in Connection.query.all():
 			if conn.twitter_id in twitter_ids:
