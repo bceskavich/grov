@@ -34,14 +34,12 @@
     var tip = d3.tip()
         .attr('class', 'd3-tip')
         .html(function(d){
-            {% for user in users %}
-                if (d.id == {{user.twitter_id}}){
-                    return "<img src='{{user.avatar()}}' /><span class='tip-text'>" + d.label + "</span>";
-                }
-                else {
-                    return "Anonymous User";
-                }
-            {% endfor %}
+            if (d.avatar) {
+                return "<img src=" + d.avatar + "/><span class='tip-text'>" + d.label + "</span>";
+            }
+            else {
+                return "Anonymous User";
+            }
         });
 
     svg.call(tip);

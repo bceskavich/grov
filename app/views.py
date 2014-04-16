@@ -31,7 +31,6 @@ def index():
 @app.route('/view')
 def view():
 	datasource = url_for('static', filename='json/graphdata.json')
-	users = User.query.all()
 	if g.user is not None and g.user.is_authenticated():
 		g.user.create_graph()
 	return render_template('view.html',
