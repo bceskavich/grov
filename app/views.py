@@ -32,10 +32,9 @@ def index():
 def view():
 	datasource = url_for('static', filename='json/graphdata.json')
 	if g.user is not None and g.user.is_authenticated():
-		g.user.create_graph()
+		data = g.user.create_graph()
 	return render_template('view.html',
-		datasource = datasource,
-		users = users)
+		datasource = datasource)
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
