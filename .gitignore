@@ -1,5 +1,8 @@
 *.pyc
 *.mo
 *.db
+runp-heroku.py
+Procfile
 grov
 graph_tests
+db_repository
